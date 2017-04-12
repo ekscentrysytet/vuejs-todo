@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Vue todo app</title>
+</head>
+<style>
+  .new-todo input.error {
+    border-color: red;
+  }
+</style>
+<body>
+  <div id="todo-app">
+    <div class="new-todo">
+      <input type="text" v-bind:class="{error: this.error}" v-model="todo">
+      <button @click="addTodo(todo)">Add</button>
+      <h4>Todos list</h4>
+      <ul>
+        <todo-item
+            v-for="todo in todoList"
+            :key="todo"
+            :title="todo"
+            v-on:remove="removeTodo(todo)"></todo-item>
+        <!-- without component -->
+        <!--<li v-for="todo in todoList">{{ todo }} <button @click="removeTodo(todo)">Remove</button></li>-->
+      </ul>
+    </div>
+  </div>
+  <script src="https://unpkg.com/vue"></script>
+  <script>
+    Vue.component('todo-item', {
+        template: `<li>{{ title }} <button @click="$emit('remove')">Remove</button></li>`,
+        props: ['title']
+    });
+    const app = new Vue({
+        el: '#todo-app',
+        data: {
+            todo: '',
+            todoList: [],
+            error: false
+        },
+        methods: {
+            addTodo: function (todo) {
+                if (!todo.trim()) {
+                    this.error = true;
+                    return;
+                }
+
+                this.todoList.push(todo.trim());
+                this.error = false;
+                this.todo = '';
+            },
+            removeTodo: function (todo) {
+                this.todoList = this.todoList.filter((item) => item !== todo);
+            }
+        }
+    });
+  </script>
+</body>
+</html>
